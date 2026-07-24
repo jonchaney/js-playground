@@ -4,9 +4,14 @@ export type Tab = {
   code: string;
 };
 
+export type ClosedTab = Tab & {
+  closedAt: number;
+};
+
 export type AppState = {
   activeId: string;
   tabs: Tab[];
+  closedTabs: ClosedTab[];
 };
 
 export type PauseController = {
