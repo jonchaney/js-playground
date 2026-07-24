@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "description": "JS playground with Postgres-backed tabs (Lit + Vite + TypeScript)",
-  "main": "server.js",
+  "main": "server/index.js",
   "scripts": {
     "dev": "concurrently -k -n server,web -c blue,green \"npm run dev:server\" \"npm run dev:client\"",
-    "dev:server": "SERVE_STATIC=0 node server.js",
+    "dev:server": "SERVE_STATIC=0 node server/index.js",
     "dev:client": "vite",
     "build": "vite build",
-    "start": "node server.js",
+    "start": "node server/index.js",
     "preview": "vite preview"
   },
   "dependencies": {

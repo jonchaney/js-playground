@@ -13,6 +13,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 COPY server.js ./
+COPY server ./server
 COPY --from=build /app/dist ./dist
 
 ENV PORT=3847
