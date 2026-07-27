@@ -361,7 +361,7 @@ export class JsPlayground extends LitElement {
     this.editorRef.value?.setCode(EXAMPLES.blank);
     this.outputRef.value?.hideDebug();
     this.outputRef.value?.setOutputHtml(
-      `<span class="empty">Hit Run to see console output and return values. Use <code>debugger</code> to pause.</span>`
+      `<span class="empty">Hit Run to see console output and return values. Use <code>debugger</code> to pause. Functions from other tabs are available by name (or via <code>tabs["Tab Name"]</code>).</span>`
     );
     this.editorRef.value?.focusEditor();
   };
@@ -391,10 +391,15 @@ export class JsPlayground extends LitElement {
 
     this.hideDebugUi();
     this.running = true;
+    this.persistEditorToActive();
+    const active = this.activeTab();
     const source = this.editorRef.value?.getCode() ?? "";
+    const libs = this.tabs
+      .filter((t) => t.id !== active?.id)
+      .map((t) => ({ name: t.name, code: t.code }));
 
     try {
-      const result = await this.runSession.run(source, this.onPause);
+      const result = await this.runSession.run(source, this.onPause, libs);
       if (result.parts.length) {
         this.outputRef.value?.setOutput(result.parts);
       }

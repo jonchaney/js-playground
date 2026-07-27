@@ -1,5 +1,6 @@
 import { escapeHtml, formatValue } from "./html";
 import { instrumentDebuggers } from "./instrument";
+import { buildCrossTabPrelude, type TabLib } from "./tab-exports";
 import type { PauseController } from "../types";
 
 export type PauseInfo = {
@@ -86,7 +87,11 @@ export class RunSession {
     }
   }
 
-  async run(source: string, onPause: OnPause): Promise<RunResult> {
+  async run(
+    source: string,
+    onPause: OnPause,
+    libs: TabLib[] = []
+  ): Promise<RunResult> {
     if (this.active) {
       this.cancel();
       return { parts: [], stopped: true };
@@ -133,6 +138,7 @@ export class RunSession {
       },
     };
 
+    const prelude = buildCrossTabPrelude(libs);
     const { code, count, parseError } = instrumentDebuggers(source);
     const started = performance.now();
 
@@ -144,7 +150,7 @@ export class RunSession {
       const fn = new AsyncFunction(
         "console",
         "__pg",
-        `"use strict";\n${code}\n//# sourceURL=playground.js`
+        `"use strict";\n${prelude}${code}\n//# sourceURL=playground.js`
       );
       const runPromise = fn(fakeConsole, __pg);
       runPromise.catch(() => {});
